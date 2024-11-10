@@ -4,6 +4,8 @@ from kivy.lang import Builder
 from kivymd.app import MDApp
 from kivy.uix.screenmanager import Screen, ScreenManager
 from kivy.uix.label import Label
+from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.floatlayout import FloatLayout
 
 from kivy.uix.image import Image
 from kivy.graphics import (RoundedRectangle, BoxShadow)
@@ -14,10 +16,41 @@ from kivy.uix.behaviors import ButtonBehavior
 from kivy.properties import ObjectProperty
 
 import cv2
+import os
+from os.path import isfile, join
+
+from colorama import Fore
+from colorama import init
+from PIL import Image as ImagePIL, ImageChops
+
+from place_data import places_data
+
+init()
+
+CAPTION_BEST_BUILDING_NAMELIST = ["ЛУЧШИЕ", "АРХИТЕКТУРНЫЕ СООРУЖЕНИЯ"]
+PHOTO_SAVE_PATH = 'photos/'
+
 
 #Screensize for pc debugging
 from kivy.core.window import Window
 Window.size = (301, 655)
+
+#Checking identity of images
+def check_pictures(loaded_pic, data_pic):
+
+    loaded_pic.thumbnail((400, 300))
+    data_pic.thumbnail((400, 300))
+    
+    res = ImageChops.difference(loaded_pic, data_pic).getbbox()
+    if res is None:
+        print(Fore.GREEN + f'\nВозможно совпадение\n{"-"*50}')
+        print(Fore.YELLOW + f'   - {pic1}')
+        print(Fore.CYAN + f'   - {pic2}')
+        with open('result_diff.txt', 'a', encoding='utf-8') as file:
+            file.write(f'Возможно совпадение\n{"-"*50}\n   - {pic1}\n   - {pic2}\n\n')
+    return
+
+
 
 class MainWidgets(Widget):
     pass
@@ -65,8 +98,16 @@ class TakePhoto(ButtonBehavior, Image):
             
             frame = self.preview.frame
             buf = cv2.flip(frame, 0).tobytes()
-            texture = Texture.create(size=(frame.shape[1], frame.shape[0]), colorfmt='bgr') 
+            buf_size = (frame.shape[1], frame.shape[0])
+            texture = Texture.create(size=buf_size, colorfmt='bgr') 
             texture.blit_buffer(buf, colorfmt='bgr', bufferfmt='ubyte')
+
+            img = ImagePIL.open("icons/button_back.png")
+            img = ImagePIL.frombytes('RGB', buf_size, buf[::-1], 'raw')
+
+            image_number = [f for f in os.listdir(PHOTO_SAVE_PATH) if isfile(join(PHOTO_SAVE_PATH, f))]
+            image_number = len(image_number)+1
+            img.save(f'photos/image{image_number}.jpg')
 
             image.texture = texture
 
@@ -78,11 +119,48 @@ class TakedPhotoPreview(Image):
 class ImageButton(ButtonBehavior, Image):
     pass
 
+class Text(Label):
+    def __init__(self, **kwargs):
+        super(Text, self).__init__(**kwargs)
+        self.size_hint = (1, 1)
+        self.halign = 'left'
+        self.valign = 'top'
+    
+    def on_size(self, *args):
+        self.text_size = self.size
+
+class CaptionBestBuildings(FloatLayout):
+    def __init__(self, **kwargs):
+        super(CaptionBestBuildings, self).__init__(**kwargs)
+        # self.size_hint = (.5, .2)
+
+        font_size = 35
+
+        upper_label = Label(
+            font_name = "fonts/a_FuturaOrtoTitulInln.ttf",
+            text = CAPTION_BEST_BUILDING_NAMELIST[0],
+            color = (1, 1, 1, 1),
+            font_size = font_size,
+            pos_hint = {'x': 0, 'y': 0.1},
+        )
+
+        lower_label = Label(
+            font_name = "fonts/a_FuturaOrtoTitulInln.ttf",
+            text = CAPTION_BEST_BUILDING_NAMELIST[1],
+            color = (1, 1, 1, 1),
+            font_size = font_size * 0.285,
+            pos_hint = {'x': 0, 'y': -0.1},
+        )
+
+        self.add_widget(upper_label)
+        self.add_widget(lower_label)
+
 
 class AppScreen(Screen):
     def __init__(self, **kwargs):
         super(AppScreen, self).__init__(**kwargs)
-        self.add_widget(MainWidgets())
+        # self.add_widget(MainWidgets())
+        self.add_widget(TakedPhotoWidgets())
     
     def release_camera(self):
         widget = self.children[0]

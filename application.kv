@@ -21,6 +21,9 @@
             size: root.width * 0.96, root.height/6
             pos: root.width * 0.02, 0
             radius: [(40,), (40,), (0,), (0,)]
+    CaptionBestBuildings:
+        center: 140, root.height - 80
+    
     BoxLayout:
         orientation: 'vertical'
         size: root.width, root.height
@@ -31,11 +34,6 @@
             pos_hint: {'top': 0.5 + self.size_hint[1]/2}
             fit_mode: "fill"
         Label:
-            id: asfasfsfsaf
-        # MDTextField:
-        #     mode: "round"
-        #     leading_icon: "magnify"
-        #     hint_text: "Найдется все!"
     
     ImageButton:
         name: "Photo Button"
@@ -51,10 +49,12 @@
         size: root.size
 
     ImageButton:
+        name: "Back to menu"
         source: 'icons/button_back.png'
         on_press: (app.root.release_camera(), app.root.open_mainpage())
-        size: 40, 40
-        center: 20, root.height - 20
+        # size: 30, 30
+        size_hint: .1, .1
+        center: 40, root.height - 50
     TakePhoto:
         preview: camera_preview
         source: 'icons/button_capture.png'
@@ -68,33 +68,61 @@
         Rectangle:
             size: self.size
             pos: self.pos
+    ImageButton:
+        name: "Back to menu"
+        source: 'icons/button_back.png'
+        on_press: app.root.open_mainpage()
+        size_hint: .1, .1
+        center: 40, root.height - 75
+    CaptionBestBuildings:
+        center: 140, root.height - 80
     BoxLayout:
         orientation: "vertical"
         size: root.width, root.height
-        ImageButton:
-            source: 'icons/button_back.png'
-            on_press: app.root.open_mainpage()
-            size: 40, 40
-            center: 20, root.height - 20
+        padding: 20
+        spacing: 20
+        BoxLayout:
+            orientation: "horizontal"
+            size_hint: 1, .1
+            Label:
         BoxLayout:
             orientation: 'horizontal'
-            size: root.width, root.height/10
+            size_hint: 1, 0.4
             TakedPhotoPreview:
                 id: taked_photo
                 source: 'icons/background_theme.png'
-                height: '48dp'
-                size_hint: 1, 1
-                pos_hint: {'top': 0.5 + self.size_hint[1]/2}
-                fit_mode: "fill"
+                height: '80dp'
+                size_hint: 0.4, 0.6
+                fit_mode: "scale-down"
             BoxLayout:
                 orientation: "vertical"
+                size_hint: 0.4, 0.6
                 Label:
+                    id: place_category
+                    font_name: "fonts/Discovery.otf"
                     text: "Жилой комплекс"
                 Label:
+                    id: place_name
+                    font_name: "fonts/Discovery.otf"
                     text: "Серебрянный ключ"
                 Label:
+                    id: place_year
+                    font_name: "fonts/Discovery.otf"
                     text: "2016 г."
         BoxLayout:
             orientation: "vertical"
-            Label:
-                text: "Жилой комплекс"
+            size_y: 200
+            Text:
+                font_name: "fonts/Discovery.otf"
+                text: "ИНФО"
+                size_hint: 1, 0.1
+            Text:
+                id: place_information
+                font_name: "fonts/Discovery.otf"
+                text: "Бла бла бла бла бла бла бла бла бла бла бла бла бла бла бла бла бла бла бла бла молоко бла бла бла бла бла бла бла бла бла бла бла"
+            ImageButton:
+                name: "Photo Button"
+                source: 'icons/button_capture.png'
+                size: 80, 80
+                center: root.width * 0.5, 0
+                on_press: app.root.open_camera()
