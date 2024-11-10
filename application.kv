@@ -1,0 +1,100 @@
+
+<MainWidgets>:
+    name: "main_screen"
+    canvas.before:
+        Color:
+            rgba: 1, 1, 1, 1
+        Rectangle:
+            size: self.size
+            pos: self.pos
+        
+        Color:
+            rgba: 0, 0, 0, 0.1
+        BoxShadow:
+            size: self.size[0], self.size[1]/10
+            pos: self.pos
+            blur_radius: self.size[1]/2
+
+        Color:
+            rgba: 1, 1, 1, 1
+        RoundedRectangle:
+            size: root.width * 0.96, root.height/6
+            pos: root.width * 0.02, 0
+            radius: [(40,), (40,), (0,), (0,)]
+    BoxLayout:
+        orientation: 'vertical'
+        size: root.width, root.height
+        Image:
+            source: 'icons/background_theme.png'
+            height: '48dp'
+            size_hint: 1, 1
+            pos_hint: {'top': 0.5 + self.size_hint[1]/2}
+            fit_mode: "fill"
+        Label:
+            id: asfasfsfsaf
+        # MDTextField:
+        #     mode: "round"
+        #     leading_icon: "magnify"
+        #     hint_text: "Найдется все!"
+    
+    ImageButton:
+        name: "Photo Button"
+        source: 'icons/button_capture.png'
+        size: 80, 80
+        center: root.width * 0.5, root.height * 0.16
+        on_press: app.root.open_camera()
+
+<CameraWidgets>:
+    name: "camera_screen"
+    CameraPreview:
+        id: camera_preview
+        size: root.size
+
+    ImageButton:
+        source: 'icons/button_back.png'
+        on_press: (app.root.release_camera(), app.root.open_mainpage())
+        size: 40, 40
+        center: 20, root.height - 20
+    TakePhoto:
+        preview: camera_preview
+        source: 'icons/button_capture.png'
+        size: 80, 80
+        center: root.width * 0.5, root.height * 0.16
+
+<TakedPhotoWidgets>:
+    canvas.before:
+        Color:
+            rgba: 0, 0, 0, 1
+        Rectangle:
+            size: self.size
+            pos: self.pos
+    BoxLayout:
+        orientation: "vertical"
+        size: root.width, root.height
+        ImageButton:
+            source: 'icons/button_back.png'
+            on_press: app.root.open_mainpage()
+            size: 40, 40
+            center: 20, root.height - 20
+        BoxLayout:
+            orientation: 'horizontal'
+            size: root.width, root.height/10
+            TakedPhotoPreview:
+                id: taked_photo
+                source: 'icons/background_theme.png'
+                height: '48dp'
+                size_hint: 1, 1
+                pos_hint: {'top': 0.5 + self.size_hint[1]/2}
+                fit_mode: "fill"
+            BoxLayout:
+                orientation: "vertical"
+                Label:
+                    text: "Жилой комплекс"
+                Label:
+                    text: "Серебрянный ключ"
+                Label:
+                    text: "2016 г."
+        BoxLayout:
+            orientation: "vertical"
+            Label:
+                text: "Жилой комплекс"
