@@ -1,33 +1,43 @@
 IMG_PATH='place_photos/'
 places_data = [
     {
-        'address': "Шестакова 60"
-        'name': "дом Губкиных"
-        'url_info': "https://gazeta.a42.ru/lenta/show/top-6-samyih-staryih-zdaniy-kemerova.html	"
-        'img': IMG_PATH+"dom_gubkinih.jpg"
+        'address': "Шестакова 60",
+        'name': "Дом Губкиных",
+        'url_info': "https://gazeta.a42.ru/lenta/show/top-6-samyih-staryih-zdaniy-kemerova.html",
+        'description': " Самым старым строением в городе считается дом Губкиных, который был построен еще в 50-х годах 19 века на берегу Томи двумя крепостными братьями Губкиными, сбежавшими с земельного надела в селе Салтымаково. Впоследствии в здании жили родственники братьев.",
+        'year': "1950-е г.",
+        'img': IMG_PATH+"dom_gubkinih.jpg",
     },
     {
-        'address': "Карболитовская 11"
-        'name': "Кемеровский областной колледж культуры и искусств"
-        'url_info': "https://gazeta.a42.ru/lenta/show/top-6-samyih-staryih-zdaniy-kemerova.html	"
-        'img': IMG_PATH+"kokki.jpg"
+        'address': "Карболитовская 11",
+        'name': "Кемеровский областной колледж культуры и искусств",
+        'url_info': "https://gazeta.a42.ru/lenta/show/top-6-samyih-staryih-zdaniy-kemerova.html",
+        'description': "Дворец труда, который находится на улице Карболитовской, 11, был построен в 1927 году. Примечательно, что на строительство ушло всего полгода. Здание стало уникальным сооружением того времени за счет своей неповторимой архитектуры, сочетающей в себе классический модерн и рациональный конструктивизм.",
+        'year': "1916 г.",
+        'img': IMG_PATH+"kokki.jpg",
     },
     {
-        'address': "Островского, 31"
-        'name': "Дом ГРЭС архитектора Полянского"
-        'url_info': "https://gazetakemerovo.ru/home-specpro-doma-dom-dialog/	"
-        'img': IMG_PATH+"domGRES.jpg"
+        'address': "Островского, 31",
+        'name': "Дом ГРЭС архитектора Полянского",
+        'url_info': "https://gazetakemerovo.ru/home-specpro-doma-dom-dialog/",
+        'description': "Дворец труда, который находится на улице Карболитовской, 11, был построен в 1927 году. Примечательно, что на строительство ушло всего полгода. Здание стало уникальным сооружением того времени за счет своей неповторимой архитектуры, сочетающей в себе классический модерн и рациональный конструктивизм.",
+        'year': "1950-е г.",
+        'img': IMG_PATH+"domGRES.jpg",
     },
     {
-        'address': "Гравийная, 40/1"
-        'name': "главная контора 'Копикуза'"
-        'url_info': "https://redhill-kemerovo.ru/publikaczii/istoriya-kemerovskogo-rudnika/istoriya-kopikuza-v-pamyatnikax/	"
-        'img': IMG_PATH+"kopiusa.jpg"
+        'address': "Гравийная, 40/1",
+        'name': "Главная контора 'Копикуза'",
+        'url_info': "https://redhill-kemerovo.ru/publikaczii/istoriya-kemerovskogo-rudnika/istoriya-kopikuza-v-pamyatnikax/",
+        'description': "Институт красоты — единственное косметическое учреждение подобного рода в России и другие заведения. В квартире № 3, один раза в месяц собиралось Правление Копикуза, состоявшее из Председателя Правления В. Ф. Трепова, его сопредседателя С. С. Хрулева и пяти директоров, избранных общим собранием акционеров.",
+        'year': "1920 г.",
+        'img': IMG_PATH+"kopiusa.jpg",
     },
     {
-        'address': "Красная Горка, 19"
-        'name': "Жилой дом для специалистов АИК"
-        'url_info': "http://suse.kemrsl.ru/view.php?id=3456	"
-        'img': IMG_PATH+"domAIK.jpg"
+        'address': "Красная Горка, 19",
+        'name': "Жилой дом для специалистов АИК",
+        'url_info': "http://suse.kemrsl.ru/view.php?id=3456",
+        'description': "Дома-«колбасы» - жилые дома для рабочих (тип «А»). Эти дома являются образцами первого применения европейской архитектуры и европейских строительных технологий в городе: это первые жилые постройки из кирпича, первые сблокированные по европейскому типу дома, первые в городе дома для рабочих с коммунальными удобствами.",
+        'year': "1926 г.",
+        'img': IMG_PATH+"domAIK.jpg",
     },
 ]

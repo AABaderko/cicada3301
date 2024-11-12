@@ -23,6 +23,7 @@ from colorama import Fore
 from colorama import init
 from PIL import Image as ImagePIL, ImageChops
 
+from image_detection import found_img_in_database
 from place_data import places_data
 
 init()
@@ -34,23 +35,6 @@ PHOTO_SAVE_PATH = 'photos/'
 #Screensize for pc debugging
 from kivy.core.window import Window
 Window.size = (301, 655)
-
-#Checking identity of images
-def check_pictures(loaded_pic, data_pic):
-
-    loaded_pic.thumbnail((400, 300))
-    data_pic.thumbnail((400, 300))
-    
-    res = ImageChops.difference(loaded_pic, data_pic).getbbox()
-    if res is None:
-        print(Fore.GREEN + f'\nВозможно совпадение\n{"-"*50}')
-        print(Fore.YELLOW + f'   - {pic1}')
-        print(Fore.CYAN + f'   - {pic2}')
-        with open('result_diff.txt', 'a', encoding='utf-8') as file:
-            file.write(f'Возможно совпадение\n{"-"*50}\n   - {pic1}\n   - {pic2}\n\n')
-    return
-
-
 
 class MainWidgets(Widget):
     pass
@@ -90,31 +74,71 @@ class TakePhoto(ButtonBehavior, Image):
     #Execute when the button is pressed
     def on_press(self):
         if not (self.preview.frame is None):
-            app_screen = self.parent.parent
-            app_screen.release_camera()
-            app_screen.open_takedphoto()
-
-            image = app_screen.children[0].ids.taked_photo
-            
             frame = self.preview.frame
             buf = cv2.flip(frame, 0).tobytes()
             buf_size = (frame.shape[1], frame.shape[0])
             texture = Texture.create(size=buf_size, colorfmt='bgr') 
             texture.blit_buffer(buf, colorfmt='bgr', bufferfmt='ubyte')
 
-            img = ImagePIL.open("icons/button_back.png")
             img = ImagePIL.frombytes('RGB', buf_size, buf[::-1], 'raw')
 
-            image_number = [f for f in os.listdir(PHOTO_SAVE_PATH) if isfile(join(PHOTO_SAVE_PATH, f))]
-            image_number = len(image_number)+1
-            img.save(f'photos/image{image_number}.jpg')
+            id_obj = place_analyzer_pictures(img)
+            if id_obj:
+                app_screen = self.parent.parent
+                app_screen.release_camera()
+                app_screen.open_takedphoto()
 
-            image.texture = texture
+                data_obj = places_data[id_obj]
+
+                taked_photo_w = app_screen.children[0]
+                taked_photo_w.ids.taked_photo.source = data_obj.get("img")
+                taked_photo_w.ids.place_category.text = ""
+                
+                taked_photo_w.ids.place_name.text = data_obj.get("name")
+                taked_photo_w.ids.place_name.font_size = max(250 / len(data_obj.get("name")), 10)
+                taked_photo_w.ids.place_year.text = data_obj.get("year")
+
+                taked_photo_w.ids.place_information.text = data_obj.get("description")
+
+                image_number = [f for f in os.listdir(PHOTO_SAVE_PATH) if isfile(join(PHOTO_SAVE_PATH, f))]
+                image_number = len(image_number)+1
+                img.save(f'photos/image{image_number}.jpg')
 
 class TakedPhotoPreview(Image):
     def __init__(self, **kwargs):
         super(TakedPhotoPreview, self).__init__(**kwargs)
 
+class Filechooser(BoxLayout):
+    def select(self, *args):
+        try: self.label.text = args[1][0]
+        except: pass
+    
+    def click(self):
+        id_obj = found_img_in_database(ImagePIL.open(self.label.text))
+        if id_obj:
+            app_screen = self.parent
+            app_screen.open_takedphoto()
+
+            data_obj = places_data[id_obj]
+
+            taked_photo_w = app_screen.children[0]
+            taked_photo_w.ids.taked_photo.source = data_obj.get("img")
+            taked_photo_w.ids.place_category.text = ""
+            
+            taked_photo_w.ids.place_name.text = data_obj.get("name")
+            taked_photo_w.ids.place_name.font_size = max(250 / len(data_obj.get("name")), 10)
+            taked_photo_w.ids.place_year.text = data_obj.get("year")
+
+            taked_photo_w.ids.place_information.text = data_obj.get("description")
+
+def place_analyzer_pictures(loaded_pic):
+    return 2
+    # loaded_pic.thumbnail(IMAGE_SIZE)
+    # for obj in places_data:
+    #     data_pic = ImagePIL.open(obj.get("img"))
+    #     data_pic.thumbnail(IMAGE_SIZE)
+    #     if check_pictures(loaded_pic, data_pic):
+    #         print(obj.get("img"))
 
 class ImageButton(ButtonBehavior, Image):
     pass
@@ -125,6 +149,14 @@ class Text(Label):
         self.size_hint = (1, 1)
         self.halign = 'left'
         self.valign = 'top'
+    
+    def on_size(self, *args):
+        self.text_size = self.size
+
+class LabelSizable(Label):
+    def __init__(self, **kwargs):
+        super(LabelSizable, self).__init__(**kwargs)
+        self.size_hint = (1, 1)
     
     def on_size(self, *args):
         self.text_size = self.size
@@ -159,8 +191,9 @@ class CaptionBestBuildings(FloatLayout):
 class AppScreen(Screen):
     def __init__(self, **kwargs):
         super(AppScreen, self).__init__(**kwargs)
-        # self.add_widget(MainWidgets())
-        self.add_widget(TakedPhotoWidgets())
+        self.add_widget(MainWidgets())
+        # self.add_widget(TakedPhotoWidgets())
+        # self.add_widget(Filechooser())
     
     def release_camera(self):
         widget = self.children[0]
@@ -173,6 +206,7 @@ class AppScreen(Screen):
     open_camera = lambda self: self.switch_scene(CameraWidgets)
     open_mainpage = lambda self: self.switch_scene(MainWidgets)
     open_takedphoto = lambda self: self.switch_scene(TakedPhotoWidgets)
+    open_explorer = lambda self: self.switch_scene(Filechooser)
         
 
 class Application(MDApp):
@@ -180,4 +214,5 @@ class Application(MDApp):
         return AppScreen()
 
 if __name__ == '__main__':
+    place_analyzer_pictures(ImagePIL.open("place_photos/domGRES.jpg"))
     Application().run()

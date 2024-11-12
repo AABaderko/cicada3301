@@ -1,4 +1,3 @@
-
 <MainWidgets>:
     name: "main_screen"
     canvas.before:
@@ -60,17 +59,37 @@
         source: 'icons/button_capture.png'
         size: 80, 80
         center: root.width * 0.5, root.height * 0.16
+    ImageButton:
+        preview: camera_preview
+        source: 'icons/button_explorer.png'
+        size: 80, 80
+        center: -20, root.height * 0.16
+        on_press: (app.root.release_camera(), app.root.open_explorer())
 
 <TakedPhotoWidgets>:
     canvas.before:
         Color:
-            rgba: 0, 0, 0, 1
-        Rectangle:
-            size: self.size
+            rgba: 0, 0, 0, 0.1
+        BoxShadow:
+            size: self.size[0], self.size[1]/10
             pos: self.pos
+            blur_radius: self.size[1]/2
+        
+        Color:
+            rgba: 0.43, 0.40, 1, 1
+        Rectangle:
+            size: self.size[0], self.size[1]*0.8
+            pos: self.pos[0], self.size[1]*0.2
+
+        Color:
+            rgba: 1, 1, 1, 1
+        RoundedRectangle:
+            size: root.width * 0.96, root.height/20
+            pos: root.width * 0.02, 0
+            radius: [(40,), (40,), (0,), (0,)]
     ImageButton:
         name: "Back to menu"
-        source: 'icons/button_back.png'
+        source: 'icons/button_back2.png'
         on_press: app.root.open_mainpage()
         size_hint: .1, .1
         center: 40, root.height - 75
@@ -97,11 +116,11 @@
             BoxLayout:
                 orientation: "vertical"
                 size_hint: 0.4, 0.6
-                Label:
+                LabelSizable:
                     id: place_category
                     font_name: "fonts/Discovery.otf"
                     text: "Жилой комплекс"
-                Label:
+                LabelSizable:
                     id: place_name
                     font_name: "fonts/Discovery.otf"
                     text: "Серебрянный ключ"
@@ -120,9 +139,32 @@
                 id: place_information
                 font_name: "fonts/Discovery.otf"
                 text: "Бла бла бла бла бла бла бла бла бла бла бла бла бла бла бла бла бла бла бла бла молоко бла бла бла бла бла бла бла бла бла бла бла"
-            ImageButton:
-                name: "Photo Button"
-                source: 'icons/button_capture.png'
-                size: 80, 80
-                center: root.width * 0.5, 0
-                on_press: app.root.open_camera()
+    ImageButton:
+        name: "Photo Button"
+        source: 'icons/button_capture.png'
+        size: 80, 80
+        center: root.width * 0.5, root.height * 0.03
+        on_press: app.root.open_camera()
+
+<Filechooser>:
+    canvas.before:
+        Color:
+            rgba: 0, 0, 0, 1
+        Rectangle:
+            size: self.size
+            pos: self.pos
+    label: label
+    orientation: 'vertical'
+    BoxLayout:
+        FileChooserIconView:
+            on_selection: root.select(*args)
+    Button:
+        id: label
+        size_hint_y: .1
+        canvas.before:
+            Color:
+                rgb: .5, .5, .4
+            Rectangle:
+                pos: self.pos
+                size: self.size
+        on_press: root.click()
